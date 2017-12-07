@@ -1466,7 +1466,6 @@ var i=0;
             timeCaseErector = Date.now();
           }
           fs.appendFileSync("C:/PULSE/AM_L1/L1_LOGS/mex_cue_CaseErector_l1.log", "tt=" + timeCaseErector + ",var=" + key + ",val=" + CaseErector[key] + "\n");
-          fs.appendFileSync("C:/PULSE/AM_L1/L1_LOGS_FAKE/mex_cue_CaseErector_l1.log", "tt=" + timeCaseErector + ",var=" + key + ",val=" + CaseErector[key] + "\n");
         }
         flagPrintCaseErector = 0;
         temptimeCaseErector = timeCaseErector;
@@ -1557,7 +1556,6 @@ var i=0;
         }
         for (var key in CasePacker) {
           fs.appendFileSync("C:/PULSE/AM_L1/L1_LOGS/mex_cue_CasePacker_l1.log", "tt=" + timeCasePacker + ",var=" + key + ",val=" + CasePacker[key] + "\n");
-          fs.appendFileSync("C:/PULSE/AM_L1/L1_LOGS_FAKE/mex_cue_CasePacker_l1.log", "tt=" + timeCasePacker + ",var=" + key + ",val=" + CasePacker[key] + "\n");
         }
         flagPrintCasePacker = 0;
         temptimeCasePacker = timeCasePacker;
@@ -1639,11 +1637,10 @@ var i=0;
         }
         for (var key in CaseSealer) {
           fs.appendFileSync("C:/PULSE/AM_L1/L1_LOGS/mex_cue_CaseSealer_l1.log", "tt=" + timeCaseSealer + ",var=" + key + ",val=" + CaseSealer[key] + "\n");
-          fs.appendFileSync("C:/PULSE/AM_L1/L1_LOGS_FAKE/mex_cue_CaseSealer_l1.log", "tt=" + timeCaseSealer + ",var=" + key + ",val=" + CaseSealer[key] + "\n");
         }
         if (CntEOL != 0) {
           fs.appendFileSync("C:/PULSE/AM_L1/L1_LOGS/mex_cue_EOL_l1.log", "tt=" + timeCaseSealer + ",var=EOL" + ",val=" + CntEOL + "\n");
-          fs.appendFileSync("C:/PULSE/AM_L1/L1_LOGS_FAKE/mex_cue_EOL_l1.log", "tt=" + timeCaseSealer + ",var=EOL" + ",val=" + CntEOL + "\n");
+
         }
 
         flagPrintCaseSealer = 0;
