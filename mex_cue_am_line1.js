@@ -459,8 +459,8 @@ var i=0;
                 XrayspeedTemp = Xrayct;
                 XrayflagStopped = true;
                 XrayflagRunning = false;
-                console.log(CntInXray - CntOutXray);
-                console.log(XrayReject.rejected);
+                //console.log(CntInXray - CntOutXray);
+                //console.log(XrayReject.rejected);
                 if(CntInXray - CntOutXray > 0 && CntInXray - CntOutXray > XrayReject.rejected)
                   XrayReject.rejected = CntInXray - CntOutXray;
               }
@@ -1722,9 +1722,10 @@ var i=0;
         CPQRBW: joinWord(resp.register[20], resp.register[21]), //Counter Product Quantity Reject Bat Weight
         SP: speedcheckWeigher
       };
-      if (checkWeigher.CPQI < 1 || checkWeigher.CPQO < 1 || checkWeigher.CPQRT < 0 || checkWeigher.CPQRBW < 0 || checkWeigher.CPQRNG < 0) {
+      if (checkWeigher.CPQI < 0 || checkWeigher.CPQO < 0 || checkWeigher.CPQRT < 0 || checkWeigher.CPQRBW < 0 || checkWeigher.CPQRNG < 0) {
         flagPrintcheckWeigher = 0;
       }
+      
       if (flagPrintcheckWeigher == 1) {
         for (var key in checkWeigher) {
           fs.appendFileSync("C:/PULSE/AM_L1/L1_LOGS/mex_cue_checkWeigher_l1.log", "tt=" + timecheckWeigher + ",var=" + key + ",val=" + checkWeigher[key] + "\n");
