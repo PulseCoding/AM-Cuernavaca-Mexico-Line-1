@@ -1725,7 +1725,7 @@ var i=0;
       if (checkWeigher.CPQI < 0 || checkWeigher.CPQO < 0 || checkWeigher.CPQRT < 0 || checkWeigher.CPQRBW < 0 || checkWeigher.CPQRNG < 0) {
         flagPrintcheckWeigher = 0;
       }
-      
+
       if (flagPrintcheckWeigher == 1) {
         for (var key in checkWeigher) {
           fs.appendFileSync("C:/PULSE/AM_L1/L1_LOGS/mex_cue_checkWeigher_l1.log", "tt=" + timecheckWeigher + ",var=" + key + ",val=" + checkWeigher[key] + "\n");
