@@ -614,6 +614,83 @@ var i=0;
       clientW3.readHoldingRegisters(0, 10).then(function(resp) {
         CntEOL = joinWord(resp.register[4], resp.register[5]);
         CntOutChechWeigher = joinWord(resp.register[0], resp.register[1]);
+              ctcheckWeigher = CntOutChechWeigher
+              speedcheckWeigher1 = CntOutChechWeigher;
+              if (flagONS12 === 0) {
+                //speedTempcheckWeigher = ctcheckWeigher;
+                speedTempcheckWeigher = CntOutChechWeigher;
+                flagONS12 = 1;
+              }
+              if (seccheckWeigher >= 60) {
+                if (stopCountcheckWeigher == 0 || flagStopcheckWeigher == 1) {
+                  flagPrintcheckWeigher = 1;
+
+                  seccheckWeigher = 0;
+                  //speedcheckWeigher = ctcheckWeigher - speedTempcheckWeigher;
+                  //speedTempcheckWeigher = ctcheckWeigher;
+                  speedcheckWeigher = CntOutChechWeigher - speedTempcheckWeigher;
+                  speedTempcheckWeigher = CntOutChechWeigher;
+                }
+                if (flagStopcheckWeigher == 1) {
+                  timecheckWeigher = Date.now();
+                }
+              }
+              seccheckWeigher++;
+              if (ctcheckWeigher > actualcheckWeigher) {
+                statecheckWeigher = 1; //RUN
+                if (stopCountcheckWeigher >= 25) {
+                  speedcheckWeigher = (CntOutChechWeigher - speedTempcheckWeigher);
+                  flagPrintcheckWeigher = 1;
+                  seccheckWeigher = 0;
+                }
+                timecheckWeigher = Date.now();
+                stopCountcheckWeigher = 0;
+                flagStopcheckWeigher = 0;
+              } else if (ctcheckWeigher == actualcheckWeigher && seccheckWeigher != 0) {
+                if (stopCountcheckWeigher == 0) {
+                  timecheckWeigher = Date.now();
+                }
+                stopCountcheckWeigher++;
+                if (stopCountcheckWeigher >= 25) {
+                  statecheckWeigher = 2; //STOP
+                  speedcheckWeigher = 0;
+                  if (flagStopcheckWeigher == 0) {
+                    flagPrintcheckWeigher = 1;
+                    seccheckWeigher = 0;
+                  }
+                  flagStopcheckWeigher = 1;
+                }
+              }
+              if (statecheckWeigher == 2) {
+                speedTempcheckWeigher = CntOutChechWeigher;
+              }
+
+              actualcheckWeigher = CntOutChechWeigher;
+              if (statecheckWeigher == 2) {
+                if (CaseSealer.ST == 4) {
+                  statecheckWeigher = 4;
+                } else {
+                  if (CaseSealer.ST == 3) {
+                    statecheckWeigher = 3;
+                  }
+                }
+              }
+              checkWeigher = {
+                ST: CaseSealer.ST,
+                CPQI: CaseSealer.CPQO, //Counter Product Quantity Out
+                CPQO: CntOutChechWeigher, //Counter Product Quantity Out
+                SP: speedcheckWeigher
+              };
+              if (checkWeigher.CPQI < 0 || checkWeigher.CPQO < 0 || checkWeigher.CPQRT < 0 || checkWeigher.CPQRBW < 0 || checkWeigher.CPQRNG < 0) {
+                flagPrintcheckWeigher = 0;
+              }
+
+              if (flagPrintcheckWeigher == 1) {
+                for (var key in checkWeigher) {
+                  fs.appendFileSync("C:/PULSE/AM_L1/L1_LOGS/mex_cue_checkWeigher_l1.log", "tt=" + timecheckWeigher + ",var=" + key + ",val=" + checkWeigher[key] + "\n");
+                }
+                flagPrintcheckWeigher = 0;
+              }
       });
     }, 1000);
   });
@@ -1648,91 +1725,7 @@ var i=0;
       }
 
     });
-    client.readHoldingRegisters(160, 39).then(function(resp) {
-      ctcheckWeigher = joinWord(resp.register[2], resp.register[3]);
-      speedcheckWeigher1 = CntOutChechWeigher;
-      if (flagONS12 === 0) {
-        //speedTempcheckWeigher = ctcheckWeigher;
-        speedTempcheckWeigher = CntOutChechWeigher;
-        flagONS12 = 1;
-      }
-      if (seccheckWeigher >= 60) {
-        if (stopCountcheckWeigher == 0 || flagStopcheckWeigher == 1) {
-          flagPrintcheckWeigher = 1;
 
-          seccheckWeigher = 0;
-          //speedcheckWeigher = ctcheckWeigher - speedTempcheckWeigher;
-          //speedTempcheckWeigher = ctcheckWeigher;
-          speedcheckWeigher = CntOutChechWeigher - speedTempcheckWeigher;
-          speedTempcheckWeigher = CntOutChechWeigher;
-        }
-        if (flagStopcheckWeigher == 1) {
-          timecheckWeigher = Date.now();
-        }
-      }
-      seccheckWeigher++;
-      if (ctcheckWeigher > actualcheckWeigher) {
-        statecheckWeigher = 1; //RUN
-        if (stopCountcheckWeigher >= 25) {
-          speedcheckWeigher = (CntOutChechWeigher - speedTempcheckWeigher);
-          flagPrintcheckWeigher = 1;
-          seccheckWeigher = 0;
-        }
-        timecheckWeigher = Date.now();
-        stopCountcheckWeigher = 0;
-        flagStopcheckWeigher = 0;
-      } else if (ctcheckWeigher == actualcheckWeigher && seccheckWeigher != 0) {
-        if (stopCountcheckWeigher == 0) {
-          timecheckWeigher = Date.now();
-        }
-        stopCountcheckWeigher++;
-        if (stopCountcheckWeigher >= 25) {
-          statecheckWeigher = 2; //STOP
-          speedcheckWeigher = 0;
-          if (flagStopcheckWeigher == 0) {
-            flagPrintcheckWeigher = 1;
-            seccheckWeigher = 0;
-          }
-          flagStopcheckWeigher = 1;
-        }
-      }
-      if (statecheckWeigher == 2) {
-        speedTempcheckWeigher = CntOutChechWeigher;
-      }
-
-      actualcheckWeigher = CntOutChechWeigher;
-      if (statecheckWeigher == 2) {
-        if (CaseSealer.ST == 4) {
-          statecheckWeigher = 4;
-        } else {
-          if (CaseSealer.ST == 3) {
-            statecheckWeigher = 3;
-          }
-        }
-      }
-      if (joinWord(resp.register[6], resp.register[7]) >= 0) {
-        checkWeigherTempReject = joinWord(resp.register[6], resp.register[7]);
-      }
-      checkWeigher = {
-        ST: CaseSealer.ST,
-        CPQI: CaseSealer.CPQO, //Counter Product Quantity Out
-        CPQO: CntOutChechWeigher, //Counter Product Quantity Out
-        CPQRT: checkWeigherTempReject, //Counter Product Quantity Reject TOTAL
-        CPQRNG: joinWord(resp.register[18], resp.register[19]), //Counter Product Quantity Reject No GLUE
-        CPQRBW: joinWord(resp.register[20], resp.register[21]), //Counter Product Quantity Reject Bat Weight
-        SP: speedcheckWeigher
-      };
-      if (checkWeigher.CPQI < 0 || checkWeigher.CPQO < 0 || checkWeigher.CPQRT < 0 || checkWeigher.CPQRBW < 0 || checkWeigher.CPQRNG < 0) {
-        flagPrintcheckWeigher = 0;
-      }
-
-      if (flagPrintcheckWeigher == 1) {
-        for (var key in checkWeigher) {
-          fs.appendFileSync("C:/PULSE/AM_L1/L1_LOGS/mex_cue_checkWeigher_l1.log", "tt=" + timecheckWeigher + ",var=" + key + ",val=" + checkWeigher[key] + "\n");
-        }
-        flagPrintcheckWeigher = 0;
-      }
-    });
   };
 
   var joinWord=function(num1, num2) {
