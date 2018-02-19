@@ -1820,6 +1820,3 @@ var i=0;
 } catch (err) {
   fs.appendFileSync("error.log", err + '\n');
 }
-setInterval(function(){
-  throw 'Exit!'
-},3600000)
