@@ -706,7 +706,7 @@ var i=0;
                 for (var key in ChechWeigherresults) {
                   if( ChechWeigherresults[key] != null && ! isNaN(ChechWeigherresults[key]) )
                   //NOTE: Cambiar path
-                  fs.appendFileSync('C:/PULSE/L13_LOGS/mex_pcl_ChechWeigher_L13.log', 'tt=' + ChechWeighertime + ',var=' + key + ',val=' + ChechWeigherresults[key] + '\n')
+                  fs.appendFileSync('C:/PULSE/AM_L1/L1_LOGS/mex_cue_checkWeigher_l1.log', 'tt=' + ChechWeighertime + ',var=' + key + ',val=' + ChechWeigherresults[key] + '\n')
                 }
                 ChechWeigherflagPrint = 0
                 ChechWeighersecStop = 0
