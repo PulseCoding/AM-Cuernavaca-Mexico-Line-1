@@ -170,16 +170,43 @@ try {
     speedDivider = 0,
     speedTempDivider = 0,
     flagPrintDivider = 0;
-  var ctcheckWeigher = 0,
-    actualcheckWeigher = 0,
-    timecheckWeigher = 0,
-    stopCountcheckWeigher = 0,
-    seccheckWeigher = 0,
-    flagStopcheckWeigher = 0,
-    statecheckWeigher = 0,
-    speedcheckWeigher = 0,
-    speedTempcheckWeigher = 0,
-    flagPrintcheckWeigher = 0;
+    var ChechWeigherct = null,
+        ChechWeigherresults = null,
+        CntInChechWeigher = null,
+        CntOutChechWeigher = null,
+        ChechWeigheractual = 0,
+        ChechWeighertime = 0,
+        ChechWeighersec = 0,
+        ChechWeigherflagStopped = false,
+        ChechWeigherstate = 0,
+        ChechWeigherspeed = 0,
+        ChechWeigherspeedTemp = 0,
+        ChechWeigherflagPrint = 0,
+        ChechWeighersecStop = 0,
+        ChechWeigherdeltaRejected = null,
+        ChechWeigherONS = false,
+        ChechWeighertimeStop = 60, //NOTE: Timestop
+        ChechWeigherWorktime = 0.99, //NOTE: Intervalo de tiempo en minutos para actualizar el log
+        ChechWeigherflagRunning = false,
+        ChechWeigherRejectFlag = false,
+        ChechWeigherReject,
+        ChechWeigherVerify = (function(){
+          try{
+            ChechWeigherReject = fs.readFileSync('ChechWeigherRejected.json')
+            if(ChechWeigherReject.toString().indexOf('}') > 0 && ChechWeigherReject.toString().indexOf('{\"rejected\":') != -1){
+              ChechWeigherReject = JSON.parse(ChechWeigherReject)
+            }else{
+              throw 12121212
+            }
+          }catch(err){
+            if(err.code == 'ENOENT' || err == 12121212){
+              fs.writeFileSync('ChechWeigherRejected.json','{"rejected":0}') //NOTE: Change the object to what it usually is.
+              ChechWeigherReject = {
+                rejected : 0
+              }
+            }
+          }
+        })()
   var ctTableSuplier = 0,
     actualTableSuplier = 0,
     timeTableSuplier = 0,
@@ -282,9 +309,9 @@ try {
   var DividerBitStatem, DividerBlock = 0,
     DividerWait = 0,
     dataBitsDivider, testBathStatus = 0;
-  var checkWeigherBitStatem, checkWeigherBlock = 0,
+  /*var checkWeigherBitStatem, checkWeigherBlock = 0,
     checkWeigherWait = 0,
-    dataBitscheckWeigher;
+    dataBitscheckWeigher;*/
   var temptimeTableSuplier = 0,
     temptimecapCombiner = 0,
     temptimeCoder = 0,
@@ -303,10 +330,10 @@ try {
     CntInXray = 0,
     CntIntestBath = 0,
     CntEOL = 0,
-    CntOutChechWeigher = 0,
+    //CntOutChechWeigher = 0,
     CntOutBundler = 0,
     CntOutDivider = 0;
-  var checkWeigherTempReject = 0,
+  var //checkWeigherTempReject = 0,
     CapperTempReject = 0,
     CaseSealerTempReject = 0,
     GasFillerTempReject = 0;
@@ -314,7 +341,7 @@ try {
     antCPQIdx = 0,
     tempRestTb = 0,
     cntQRXray = 0;
-    var speedcheckWeigher1;
+  //  var speedcheckWeigher1;
     var secPubNub=60*4+55;
     var publishConfig;
     var testBathct = null,
@@ -613,84 +640,79 @@ var i=0;
     intIdW3 = setInterval(function(){
       clientW3.readHoldingRegisters(0, 10).then(function(resp) {
         CntEOL = joinWord(resp.register[4], resp.register[5]);
+        CntInChechWeigher = CaseSealer.CPQO;
         CntOutChechWeigher = joinWord(resp.register[0], resp.register[1]);
-              ctcheckWeigher = CntOutChechWeigher
-              speedcheckWeigher1 = CntOutChechWeigher;
-              if (flagONS12 === 0) {
-                //speedTempcheckWeigher = ctcheckWeigher;
-                speedTempcheckWeigher = CntOutChechWeigher;
-                flagONS12 = 1;
+        //------------------------------------------ChechWeigher----------------------------------------------
+              ChechWeigherct = CntOutChechWeigher // NOTE: igualar al contador de salida
+              if (!ChechWeigherONS && ChechWeigherct) {
+                ChechWeigherspeedTemp = ChechWeigherct
+                ChechWeighersec = Date.now()
+                ChechWeigherONS = true
+                ChechWeighertime = Date.now()
               }
-              if (seccheckWeigher >= 60) {
-                if (stopCountcheckWeigher == 0 || flagStopcheckWeigher == 1) {
-                  flagPrintcheckWeigher = 1;
-
-                  seccheckWeigher = 0;
-                  //speedcheckWeigher = ctcheckWeigher - speedTempcheckWeigher;
-                  //speedTempcheckWeigher = ctcheckWeigher;
-                  speedcheckWeigher = CntOutChechWeigher - speedTempcheckWeigher;
-                  speedTempcheckWeigher = CntOutChechWeigher;
+              if(ChechWeigherct > ChechWeigheractual){
+                if(ChechWeigherflagStopped){
+                  ChechWeigherspeed = ChechWeigherct - ChechWeigherspeedTemp
+                  ChechWeigherspeedTemp = ChechWeigherct
+                  ChechWeighersec = Date.now()
+                  ChechWeigherdeltaRejected = null
+                  ChechWeigherRejectFlag = false
+                  ChechWeighertime = Date.now()
                 }
-                if (flagStopcheckWeigher == 1) {
-                  timecheckWeigher = Date.now();
+                ChechWeighersecStop = 0
+                ChechWeigherstate = 1
+                ChechWeigherflagStopped = false
+                ChechWeigherflagRunning = true
+              } else if( ChechWeigherct == ChechWeigheractual ){
+                if(ChechWeighersecStop == 0){
+                  ChechWeighertime = Date.now()
+                  ChechWeighersecStop = Date.now()
                 }
-              }
-              seccheckWeigher++;
-              if (ctcheckWeigher > actualcheckWeigher) {
-                statecheckWeigher = 1; //RUN
-                if (stopCountcheckWeigher >= 25) {
-                  speedcheckWeigher = (CntOutChechWeigher - speedTempcheckWeigher);
-                  flagPrintcheckWeigher = 1;
-                  seccheckWeigher = 0;
-                }
-                timecheckWeigher = Date.now();
-                stopCountcheckWeigher = 0;
-                flagStopcheckWeigher = 0;
-              } else if (ctcheckWeigher == actualcheckWeigher && seccheckWeigher != 0) {
-                if (stopCountcheckWeigher == 0) {
-                  timecheckWeigher = Date.now();
-                }
-                stopCountcheckWeigher++;
-                if (stopCountcheckWeigher >= 25) {
-                  statecheckWeigher = 2; //STOP
-                  speedcheckWeigher = 0;
-                  if (flagStopcheckWeigher == 0) {
-                    flagPrintcheckWeigher = 1;
-                    seccheckWeigher = 0;
+                if( ( Date.now() - ( ChechWeighertimeStop * 1000 ) ) >= ChechWeighersecStop ){
+                  ChechWeigherspeed = 0
+                  ChechWeigherstate = 2
+                  ChechWeigherspeedTemp = ChechWeigherct
+                  ChechWeigherflagStopped = true
+                  ChechWeigherflagRunning = false
+                  if(CntInChechWeigher - CntOutChechWeigher - ChechWeigherReject.rejected != 0 && ! ChechWeigherRejectFlag){
+                    ChechWeigherdeltaRejected = CntInChechWeigher - CntOutChechWeigher - ChechWeigherReject.rejected
+                    ChechWeigherReject.rejected = CntInChechWeigher - CntOutChechWeigher
+                    fs.writeFileSync('ChechWeigherRejected.json','{"rejected": ' + ChechWeigherReject.rejected + '}')
+                    ChechWeigherRejectFlag = true
+                  }else{
+                    ChechWeigherdeltaRejected = null
                   }
-                  flagStopcheckWeigher = 1;
+                  ChechWeigherflagPrint = 1
                 }
               }
-              if (statecheckWeigher == 2) {
-                speedTempcheckWeigher = CntOutChechWeigher;
-              }
-
-              actualcheckWeigher = CntOutChechWeigher;
-              if (statecheckWeigher == 2) {
-                if (CaseSealer.ST == 4) {
-                  statecheckWeigher = 4;
-                } else {
-                  if (CaseSealer.ST == 3) {
-                    statecheckWeigher = 3;
-                  }
+              ChechWeigheractual = ChechWeigherct
+              if(Date.now() - 60000 * ChechWeigherWorktime >= ChechWeighersec && ChechWeighersecStop == 0){
+                if(ChechWeigherflagRunning && ChechWeigherct){
+                  ChechWeigherflagPrint = 1
+                  ChechWeighersecStop = 0
+                  ChechWeigherspeed = ChechWeigherct - ChechWeigherspeedTemp
+                  ChechWeigherspeedTemp = ChechWeigherct
+                  ChechWeighersec = Date.now()
                 }
               }
-              checkWeigher = {
-                ST: CaseSealer.ST,
-                CPQI: CaseSealer.CPQO, //Counter Product Quantity Out
-                CPQO: CntOutChechWeigher, //Counter Product Quantity Out
-                SP: speedcheckWeigher
-              };
-              if (checkWeigher.CPQI < 0 || checkWeigher.CPQO < 0 || checkWeigher.CPQRT < 0 || checkWeigher.CPQRBW < 0 || checkWeigher.CPQRNG < 0) {
-                flagPrintcheckWeigher = 0;
+              ChechWeigherresults = {
+                ST: ChechWeigherstate,
+                CPQI : CntInChechWeigher,
+                CPQO : CntOutChechWeigher,
+                CPQR : ChechWeigherdeltaRejected,
+                SP: ChechWeigherspeed
               }
-
-              if (flagPrintcheckWeigher == 1) {
-                for (var key in checkWeigher) {
-                  fs.appendFileSync("C:/PULSE/AM_L1/L1_LOGS/mex_cue_checkWeigher_l1.log", "tt=" + timecheckWeigher + ",var=" + key + ",val=" + checkWeigher[key] + "\n");
+              if (ChechWeigherflagPrint == 1) {
+                for (var key in ChechWeigherresults) {
+                  if( ChechWeigherresults[key] != null && ! isNaN(ChechWeigherresults[key]) )
+                  //NOTE: Cambiar path
+                  fs.appendFileSync('C:/PULSE/L13_LOGS/mex_pcl_ChechWeigher_L13.log', 'tt=' + ChechWeighertime + ',var=' + key + ',val=' + ChechWeigherresults[key] + '\n')
                 }
-                flagPrintcheckWeigher = 0;
+                ChechWeigherflagPrint = 0
+                ChechWeighersecStop = 0
+                ChechWeighertime = Date.now()
               }
+        //------------------------------------------ChechWeigher----------------------------------------------
       });
     }, 1000);
   });
