@@ -31,6 +31,7 @@ try {
     'reconnectTimeout': 30000
   }).connect();
   var lastReject,flagInfo2Send=0;
+  var CasePackerOut = null;
   var timestarter = 0,testBath2,CPQOtestBath = 0,timestarter2 = 0, testBath3,CPQOtestBath2 = 0,intId;
   var CasePacker, CaseErector, CaseSealer, Capper, MonoBlock, GasFiller, Bundler, divXray, testBath, capCombiner, TableSuplier, Coder, Divider, checkWeigher;
   var timestop = 5,testBathCPQIant = 0,testBathCPQRant = 0,testBathCPQOant,inittestBath = 0,initxRay = 0,xRayCPQIant = 0,xRayCPQRant,xRayCPQOant;
@@ -1578,8 +1579,10 @@ var i=0;
       CasePackerWait1 = CasePackerBitState[5];
       CasePackerWait2 = CasePackerBitState[3];
       CasePackerWait3 = CasePackerBitState[1];
+      CasePackerOut = joinWord(resp.register[3], resp.register[4]);
 
-      ctCasePacker = CaseErector.CPQO;
+      //ctCasePacker = CaseErector.CPQO;
+      ctCasePacker = joinWord(resp.register[3], resp.register[4]);
       if (flagONS1 == 0) {
         speedTempCasePacker = ctCasePacker;
         flagONS1 = 1;
@@ -1645,8 +1648,7 @@ var i=0;
         SP: speedCasePacker,
       };
 
-      if (CasePacker.CPQO < 1) {
-
+      if (CasePacker.CPQO < 0) {
         flagPrintCasePacker = 0;
       }
       if (flagPrintCasePacker == 1) {
