@@ -487,8 +487,8 @@ var i=0;
                 XrayspeedTemp = Xrayct;
                 XrayflagStopped = true;
                 XrayflagRunning = false;
-                //console.log(CntInXray - CntOutXray);
-                //console.log(XrayReject.rejected);
+                console.log(CntInXray - CntOutXray);
+                console.log(XrayReject.rejected);
                 if(CntInXray - CntOutXray > 0 && CntInXray - CntOutXray > XrayReject.rejected)
                   XrayReject.rejected = CntInXray - CntOutXray;
               }
@@ -541,6 +541,7 @@ var i=0;
 
             if (XrayflagPrint == 1 && Xrayct) {
               fs.writeFileSync('XrayRejected.json',JSON.stringify(XrayReject));
+              console.log("Write Ok");
               for (var key in Xrayresults) {
                 if(Xrayresults[key]!=null&&!isNaN(Xrayresults[key]))
                 //NOTE: Cambiar Path
