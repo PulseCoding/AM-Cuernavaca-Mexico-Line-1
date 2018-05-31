@@ -487,8 +487,8 @@ var i=0;
                 XrayspeedTemp = Xrayct;
                 XrayflagStopped = true;
                 XrayflagRunning = false;
-                console.log(CntInXray - CntOutXray);
-                console.log(XrayReject.rejected);
+                //console.log("1. " + CntInXray - CntOutXray);
+                //console.log("2. " +XrayReject.rejected);
                 if(CntInXray - CntOutXray > 0 && CntInXray - CntOutXray > XrayReject.rejected)
                   XrayReject.rejected = CntInXray - CntOutXray;
               }
@@ -541,7 +541,7 @@ var i=0;
 
             if (XrayflagPrint == 1 && Xrayct) {
               fs.writeFileSync('XrayRejected.json',JSON.stringify(XrayReject));
-              console.log("Write Ok");
+              //console.log("3. " + XrayReject);
               for (var key in Xrayresults) {
                 if(Xrayresults[key]!=null&&!isNaN(Xrayresults[key]))
                 //NOTE: Cambiar Path
@@ -586,8 +586,8 @@ var i=0;
             } else if (testBathCanInlet == 1) {
               testBathstate = 3;
             }
-           // if(CntIntestBath - CntOuttestBath > 0 && CntIntestBath - CntOuttestBath > testBathReject.rejected)
-             // testBathReject.rejected = CntIntestBath - CntOuttestBath;
+            if(CntIntestBath - CntOuttestBath > 0 && CntIntestBath - CntOuttestBath > testBathReject.rejected)
+              testBathReject.rejected = CntIntestBath - CntOuttestBath;
           }
           if(testBathsecStop%testBathtimeStop*3 == 0 ||testBathsecStop == testBathtimeStop ){
             testBathflagPrint=1;
