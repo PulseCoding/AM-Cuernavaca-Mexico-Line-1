@@ -1495,84 +1495,6 @@ var i=0;
 
     });
 
-    client.readHoldingRegisters(80, 40).then(function(resp) {
-      CaseErectorBitState = DataBits(resp.register[0], resp.register[1]);
-      CaseErectorBlock = CaseErectorBitState[4];
-      ctCaseErector = joinWord(resp.register[4], resp.register[5]);
-      if (flagONS2 == 0) {
-        speedTempCaseErector = ctCaseErector;
-        flagONS2 = 1;
-      }
-      if (secCaseErector >= 60) {
-        if (stopCountCaseErector == 0 || flagStopCaseErector == 1) {
-          flagPrintCaseErector = 1;
-          secCaseErector = 0;
-          speedCaseErector = ctCaseErector - speedTempCaseErector;
-          speedTempCaseErector = ctCaseErector;
-        }
-        if (flagStopCaseErector == 1) {
-          timeCaseErector = Date.now();
-        }
-      }
-      secCaseErector++;
-      if (ctCaseErector > actualCaseErector) {
-        stateCaseErector = 1; //RUN
-        if (stopCountCaseErector >= 60) { //timestop
-          speedCaseErector = (ctCaseErector - speedTempCaseErector);
-          flagPrintCaseErector = 1;
-          secCaseErector = 0;
-        }
-        timeCaseErector = Date.now();
-        stopCountCaseErector = 0;
-        flagStopCaseErector = 0;
-
-
-      } else if (ctCaseErector == actualCaseErector && secCaseErector != 0) {
-        if (stopCountCaseErector == 0) {
-          timeCaseErector = Date.now();
-        }
-        stopCountCaseErector++;
-        if (stopCountCaseErector >= 60) { //timestop
-          stateCaseErector = 2; //STOP
-          speedCaseErector = 0;
-          if (flagStopCaseErector == 0) {
-            flagPrintCaseErector = 1;
-            secCaseErector = 0;
-          }
-          flagStopCaseErector = 1;
-        }
-      }
-      if (stateCaseErector == 2) {
-        speedTempCaseErector = ctCaseErector;
-      }
-
-      actualCaseErector = ctCaseErector;
-      if (stateCaseErector == 2) {
-        if (CaseErectorBlock == 1) {
-          stateCaseErector = 4;
-        }
-      }
-      CaseErector = {
-        ST: stateCaseErector,
-        CPQO: joinWord(resp.register[4], resp.register[5]), //Counter Product Quantity Out
-        SP: speedCaseErector,
-      };
-      if (CaseErector.CPQO < 1) {
-        flagPrintCaseErector = 0;
-      }
-      if (flagPrintCaseErector == 1) {
-        for (var key in CaseErector) {
-          if (timeCaseErector == temptimeCaseErector) {
-            timeCaseErector = Date.now();
-          }
-          fs.appendFileSync("C:/PULSE/AM_L1/L1_LOGS/mex_cue_CaseErector_l1.log", "tt=" + timeCaseErector + ",var=" + key + ",val=" + CaseErector[key] + "\n");
-        }
-        flagPrintCaseErector = 0;
-        temptimeCaseErector = timeCaseErector;
-      }
-
-    });
-
     client.readHoldingRegisters(41, 40).then(function(resp) {
       CasePackerBitState = DataBits(resp.register[7], resp.register[8]);
       CasePackerBlock = CasePackerBitState[7];
@@ -1660,6 +1582,84 @@ var i=0;
         }
         flagPrintCasePacker = 0;
         temptimeCasePacker = timeCasePacker;
+      }
+
+    });
+	  client.readHoldingRegisters(80, 40).then(function(resp) {
+      CaseErectorBitState = DataBits(resp.register[0], resp.register[1]);
+      CaseErectorBlock = CaseErectorBitState[4];
+     // ctCaseErector = joinWord(resp.register[4], resp.register[5]);
+      ctCaseErector = CasePacker.CPQO;
+      if (flagONS2 == 0) {
+        speedTempCaseErector = ctCaseErector;
+        flagONS2 = 1;
+      }
+      if (secCaseErector >= 60) {
+        if (stopCountCaseErector == 0 || flagStopCaseErector == 1) {
+          flagPrintCaseErector = 1;
+          secCaseErector = 0;
+          speedCaseErector = ctCaseErector - speedTempCaseErector;
+          speedTempCaseErector = ctCaseErector;
+        }
+        if (flagStopCaseErector == 1) {
+          timeCaseErector = Date.now();
+        }
+      }
+      secCaseErector++;
+      if (ctCaseErector > actualCaseErector) {
+        stateCaseErector = 1; //RUN
+        if (stopCountCaseErector >= 60) { //timestop
+          speedCaseErector = (ctCaseErector - speedTempCaseErector);
+          flagPrintCaseErector = 1;
+          secCaseErector = 0;
+        }
+        timeCaseErector = Date.now();
+        stopCountCaseErector = 0;
+        flagStopCaseErector = 0;
+
+
+      } else if (ctCaseErector == actualCaseErector && secCaseErector != 0) {
+        if (stopCountCaseErector == 0) {
+          timeCaseErector = Date.now();
+        }
+        stopCountCaseErector++;
+        if (stopCountCaseErector >= 60) { //timestop
+          stateCaseErector = 2; //STOP
+          speedCaseErector = 0;
+          if (flagStopCaseErector == 0) {
+            flagPrintCaseErector = 1;
+            secCaseErector = 0;
+          }
+          flagStopCaseErector = 1;
+        }
+      }
+      if (stateCaseErector == 2) {
+        speedTempCaseErector = ctCaseErector;
+      }
+
+      actualCaseErector = ctCaseErector;
+      if (stateCaseErector == 2) {
+        if (CaseErectorBlock == 1) {
+          stateCaseErector = 4;
+        }
+      }
+      CaseErector = {
+        ST: stateCaseErector,
+        CPQO: joinWord(resp.register[4], resp.register[5]), //Counter Product Quantity Out
+        SP: speedCaseErector,
+      };
+      if (CaseErector.CPQO < 1) {
+        flagPrintCaseErector = 0;
+      }
+      if (flagPrintCaseErector == 1) {
+        for (var key in CaseErector) {
+          if (timeCaseErector == temptimeCaseErector) {
+            timeCaseErector = Date.now();
+          }
+          fs.appendFileSync("C:/PULSE/AM_L1/L1_LOGS/mex_cue_CaseErector_l1.log", "tt=" + timeCaseErector + ",var=" + key + ",val=" + CaseErector[key] + "\n");
+        }
+        flagPrintCaseErector = 0;
+        temptimeCaseErector = timeCaseErector;
       }
 
     });
