@@ -1645,7 +1645,7 @@ var i=0;
       }
       CaseErector = {
         ST: stateCaseErector,
-        CPQO: joinWord(resp.register[4], resp.register[5]), //Counter Product Quantity Out
+        CPQO: CasePacker.CPQO, //Counter Product Quantity Out
         SP: speedCaseErector,
       };
       if (CaseErector.CPQO < 1) {
