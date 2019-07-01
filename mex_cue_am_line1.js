@@ -525,7 +525,7 @@ var i=0;
                 ST: Xraystate,
                 CPQI: CntInXray,//NOTE: Igualar al contador de salida
                 CPQO: CntOutXray,//NOTE: Igualar al contador de salida
-                CPQR: XrayReject.rejected,
+                //CPQR: XrayReject.rejected,
                 SP: Xrayspeed
               };
             }else if(CntOutXray == null){
@@ -612,7 +612,7 @@ var i=0;
             ST: testBathstate,
             CPQI: CntIntestBath,// + testBathReject.rejected,//NOTE: Igualar al contador de salida
             CPQO: CntOuttestBath,//NOTE: Igualar al contador de salida
-            CPQR: testBathReject.rejected,
+            //CPQR: testBathReject.rejected,
             SP: testBathspeed
           };
         }else if(CntOuttestBath == null){
@@ -700,7 +700,7 @@ var i=0;
                 ST: ChechWeigherstate,
                 CPQI : CntInChechWeigher,
                 CPQO : CntOutChechWeigher,
-                CPQR : ChechWeigherdeltaRejected,
+                //CPQR : ChechWeigherdeltaRejected,
                 SP: ChechWeigherspeed
               }
               if (ChechWeigherflagPrint == 1) {
